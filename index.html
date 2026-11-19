@@ -20,9 +20,10 @@
      - `telefonoTel`: numero con "+39" per la chiamata diretta (es. "+39021234567")
      - `telefonoDisplay`: come vuoi mostrarlo scritto sul sito (es. "+39 02 1234 567")
 
-  3. LINK INSTAGRAM E GOOGLE MAPS / RECENSIONI:
+  3. LINK INSTAGRAM, FACEBOOK E GOOGLE MAPS / RECENSIONI:
      Dentro `CONFIG_CENTRO` aggiorna `instagramHandle`, `instagramUrl`,
-     `googleReviewsUrl`, `googleMapsNavigatoreUrl` e `googleMapsEmbedUrl`
+     `facebookUrl`, `googleReviewsUrl`, `googleMapsUrl`,
+     `googleMapsNavigatoreUrl` e `googleMapsEmbedUrl`
      (su Google Maps: Cerca il tuo centro -> Condividi -> Incorpora una mappa ->
      copia l'URL dentro src="...").
 
@@ -139,6 +140,9 @@
 
       body {
         margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
         background-color: var(--bg-ivory);
         color: var(--text-primary);
         font-family: var(--font-sans);
@@ -146,6 +150,10 @@
         line-height: 1.65;
         -webkit-font-smoothing: antialiased;
         overflow-x: hidden;
+      }
+
+      main {
+        flex: 1;
       }
 
       img {
@@ -212,7 +220,13 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 32px;
+        gap: 10px;
+      }
+
+      @media (min-width: 900px) {
+        .header-inner {
+          gap: 20px;
+        }
       }
 
       .brand-wordmark {
@@ -273,12 +287,18 @@
       .nav-links {
         display: none;
         align-items: center;
-        gap: 28px;
+        gap: 20px;
       }
 
       @media (min-width: 900px) {
         .nav-links {
           display: flex;
+        }
+      }
+
+      @media (min-width: 1100px) {
+        .nav-links {
+          gap: 26px;
         }
       }
 
@@ -306,35 +326,91 @@
         transition: transform 200ms var(--ease-out);
       }
 
-      .nav-link:hover {
+      .nav-link:hover,
+      .nav-link.is-active {
         color: var(--text-primary);
       }
 
-      .nav-link:hover::after {
+      .nav-link:hover::after,
+      .nav-link.is-active::after {
         transform: scaleX(1);
       }
 
       .header-actions {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 6px;
         flex-shrink: 0;
+      }
+
+      @media (min-width: 768px) {
+        .header-actions {
+          gap: 10px;
+        }
+      }
+
+      .header-social-icons {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      @media (min-width: 768px) {
+        .header-social-icons {
+          gap: 6px;
+        }
+      }
+
+      .icon-action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-hairline);
+        background-color: var(--bg-surface);
+        color: var(--text-primary);
+        flex-shrink: 0;
+        transition: background-color 180ms var(--ease-out), border-color 180ms var(--ease-out), color 180ms var(--ease-out), transform 180ms var(--ease-out);
+      }
+
+      @media (min-width: 768px) {
+        .icon-action-btn {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      .icon-action-btn:hover {
+        background-color: var(--bg-sand-soft);
+        border-color: var(--accent-rose-deep);
+        color: var(--accent-rose-deep);
+        transform: translateY(-1px);
       }
 
       .btn-header-cta {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-height: 40px;
-        padding: 8px 18px;
+        min-height: 36px;
+        padding: 7px 12px;
         background-color: var(--text-primary);
         color: var(--bg-ivory);
-        font-size: 0.875rem;
+        font-size: 0.8125rem;
         font-weight: 500;
         border-radius: var(--radius-sm);
         white-space: nowrap;
         flex-shrink: 0;
         transition: background-color 180ms var(--ease-out), transform 180ms var(--ease-out);
+      }
+
+      @media (min-width: 768px) {
+        .btn-header-cta {
+          min-height: 40px;
+          padding: 8px 18px;
+          font-size: 0.875rem;
+        }
       }
 
       .btn-header-cta:hover {
@@ -346,8 +422,8 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 44px;
-        height: 44px;
+        width: 38px;
+        height: 38px;
         padding: 0;
         border: 1px solid var(--border-hairline);
         border-radius: var(--radius-sm);
@@ -493,6 +569,46 @@
         border-bottom: 1px solid var(--border-hairline);
       }
 
+      /* Gestione viste multi-pagina (una pagina visibile alla volta) */
+      .page-view {
+        display: none;
+      }
+
+      .page-view.is-active {
+        display: block;
+      }
+
+      .page-view.section {
+        padding-top: calc(58px + 36px);
+        padding-bottom: 64px;
+      }
+
+      @media (min-width: 768px) {
+        .page-view.section {
+          padding-top: calc(var(--header-h) + 48px);
+          padding-bottom: 84px;
+        }
+      }
+
+      .page-back-bar {
+        margin-bottom: 24px;
+      }
+
+      .page-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        padding: 6px 0;
+        transition: color 180ms var(--ease-out);
+      }
+
+      .page-back-link:hover {
+        color: var(--accent-rose-deep);
+      }
+
       .eyebrow {
         display: flex;
         align-items: center;
@@ -622,6 +738,7 @@
       .hero-cta-group {
         display: flex;
         flex-wrap: wrap;
+        align-items: center;
         gap: 14px;
       }
 
@@ -1057,7 +1174,6 @@
       .reviews-cta-row {
         display: flex;
         justify-content: center;
-        margin-bottom: 64px;
       }
 
       .location-grid {
@@ -1065,8 +1181,10 @@
         grid-template-columns: 1fr;
         gap: 28px;
         align-items: stretch;
-        padding-top: 56px;
+        margin-top: 44px;
+        padding-top: 52px;
         border-top: 1px solid var(--border-hairline);
+        scroll-margin-top: 88px;
       }
 
       @media (min-width: 960px) {
@@ -1281,7 +1399,7 @@
          =================================================================== -->
     <header class="site-header">
       <div class="container header-inner">
-        <a href="#top" class="brand-logo-link" aria-label="ENCANTO · Federica Brogna — Torna su">
+        <a href="#home" class="brand-logo-link" aria-label="ENCANTO · Federica Brogna — Pagina Principale">
           <img
             src="./assets/aistudio/marchio_12080a0c.webp"
             alt="Logo ufficiale ENCANTO · Federica Brogna"
@@ -1301,6 +1419,53 @@
         </nav>
 
         <div class="header-actions">
+          <div class="header-social-icons" aria-label="Collegamenti social e mappa del centro">
+            <a
+              href="#"
+              class="icon-action-btn"
+              data-bind-instagram="true"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram ENCANTO @encanto_federica_brogna"
+              title="Seguici su Instagram"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </a>
+
+            <a
+              href="#"
+              class="icon-action-btn"
+              data-bind-google-maps="true"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Apri ENCANTO su Google Maps"
+              title="Trova il negozio su Google Maps"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </a>
+
+            <a
+              href="#"
+              class="icon-action-btn"
+              data-bind-facebook="true"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Pagina Facebook ENCANTO · Federica Brogna"
+              title="Visita la pagina Facebook"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+              </svg>
+            </a>
+          </div>
+
           <a
             href="#contatti"
             class="btn-header-cta"
@@ -1329,6 +1494,7 @@
 
       <nav class="mobile-drawer" id="mobile-drawer" aria-label="Menu mobile">
         <div class="mobile-drawer-list">
+          <a href="#home" class="mobile-drawer-link">Home</a>
           <a href="#filosofia" class="mobile-drawer-link">Filosofia</a>
           <a href="#trattamenti" class="mobile-drawer-link">Trattamenti</a>
           <a href="#galleria" class="mobile-drawer-link">Galleria</a>
@@ -1341,9 +1507,9 @@
 
     <main id="top">
       <!-- =================================================================
-           HERO SECTION
+           PAGINA PRINCIPALE (HERO)
            ================================================================= -->
-      <section class="hero">
+      <section id="home" class="hero page-view is-active" data-page="home">
         <div class="container">
           <div class="hero-grid">
             <div class="hero-copy">
@@ -1354,7 +1520,7 @@
               </div>
 
               <h1 class="hero-title">
-                Dedicati alla tua <em>bellezza</em>, con calma e cura.
+                Dedicati alla tua <em>bellezza</em>
               </h1>
 
               <p class="hero-subtitle">
@@ -1374,8 +1540,9 @@
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                   </svg>
-                  Prenota su WhatsApp
+                  Prenota Ora
                 </a>
+
                 <a href="#trattamenti" class="btn-secondary">Scopri i Trattamenti</a>
               </div>
             </div>
@@ -1409,14 +1576,85 @@
               <div class="trust-item-label">Posizione centrale e facile da raggiungere</div>
             </div>
           </div>
+
+          <!-- DOVE SIAMO (Mappa <iframe> gratuita + Indirizzo & Orari) -->
+          <div id="dove-siamo" class="location-grid">
+            <div class="map-frame-wrap">
+              <iframe
+                id="google-maps-iframe"
+                title="Mappa sede ENCANTO · Federica Brogna a Nova Siri Marina"
+                src="https://maps.google.com/maps?q=ENCANTO+%C2%B7+Federica+Brogna,+Viale+Siris+2,+75020+Nova+Siri+MT&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen
+              ></iframe>
+            </div>
+
+            <div class="location-details">
+              <div>
+                <div class="eyebrow">Dove Siamo</div>
+                <h2 class="section-title" style="font-size: clamp(1.75rem, 2.6vw, 2.35rem);">
+                  Vieni a trovarci da <span data-bind="nomeCentro">Encanto</span>
+                </h2>
+              </div>
+
+              <div>
+                <div class="info-block-label">Indirizzo &amp; Contatti Diretti</div>
+                <p class="info-block-text" data-bind="indirizzoCompleto">
+                  Viale Siris 2, 75020 Nova Siri Marina (MT)
+                </p>
+                <p class="info-block-text" style="margin-top: 6px; font-size: 0.925rem; color: var(--text-secondary);">
+                  <a href="tel:+393274951132" data-bind-tel="true" class="tabular" style="text-decoration: underline; text-underline-offset: 3px;" data-bind="telefonoDisplay">+39 327 495 1132</a>
+                  <span aria-hidden="true"> · </span>
+                  <a href="mailto:encanto.federica@gmail.com" data-bind-mailto="true" style="text-decoration: underline; text-underline-offset: 3px;" data-bind="email">encanto.federica@gmail.com</a>
+                </p>
+              </div>
+
+              <div>
+                <div class="info-block-label">Orari &amp; Appuntamenti</div>
+                <ul class="hours-list tabular">
+                  <li><span>Ricevimento</span> <strong>Su appuntamento</strong></li>
+                  <li><span>Martedì – Sabato</span> <strong>Orari flessibili su richiesta</strong></li>
+                  <li><span>Prenotazioni</span> <strong>WhatsApp o Telefono</strong></li>
+                </ul>
+              </div>
+
+              <div class="location-actions">
+                <a
+                  href="#"
+                  class="btn-primary"
+                  data-bind-directions="true"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                  </svg>
+                  Avvia Navigatore
+                </a>
+                <button type="button" class="btn-secondary" id="copy-address-btn">
+                  Copia indirizzo
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       <!-- =================================================================
-           CHI SIAMO / FILOSOFIA
+           PAGINA: CHI SIAMO / FILOSOFIA
            ================================================================= -->
-      <section id="filosofia" class="section section-sand">
+      <section id="filosofia" class="section section-sand page-view" data-page="filosofia">
         <div class="container">
+          <div class="page-back-bar">
+            <a href="#home" class="page-back-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Torna alla Home
+            </a>
+          </div>
           <div class="about-grid">
             <div class="media-frame about-media">
               <img
@@ -1486,10 +1724,19 @@
       </section>
 
       <!-- =================================================================
-           LISTINO PREZZI E TRATTAMENTI (Generato da JavaScript)
+           PAGINA: LISTINO PREZZI E TRATTAMENTI (Generato da JavaScript)
            ================================================================= -->
-      <section id="trattamenti" class="section">
+      <section id="trattamenti" class="section page-view" data-page="trattamenti">
         <div class="container">
+          <div class="page-back-bar">
+            <a href="#home" class="page-back-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Torna alla Home
+            </a>
+          </div>
           <div class="menu-header">
             <div>
               <div class="eyebrow">Menu dei Servizi</div>
@@ -1533,10 +1780,19 @@
       </section>
 
       <!-- =================================================================
-           GALLERIA / VETRINA INSTAGRAM
+           PAGINA: GALLERIA / VETRINA INSTAGRAM
            ================================================================= -->
-      <section id="galleria" class="section section-sand">
+      <section id="galleria" class="section section-sand page-view" data-page="galleria">
         <div class="container">
+          <div class="page-back-bar">
+            <a href="#home" class="page-back-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Torna alla Home
+            </a>
+          </div>
           <div class="section-head-center">
             <div class="eyebrow">I Nostri Ambienti</div>
             <h2 class="section-title">Uno sguardo dentro ENCANTO</h2>
@@ -1700,10 +1956,19 @@
       </section>
 
       <!-- =================================================================
-           RECENSIONI GOOGLE & DOVE SIAMO
+           PAGINA: RECENSIONI GOOGLE & DOVE SIAMO
            ================================================================= -->
-      <section id="recensioni" class="section">
+      <section id="recensioni" class="section page-view" data-page="recensioni">
         <div class="container">
+          <div class="page-back-bar">
+            <a href="#home" class="page-back-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Torna alla Home
+            </a>
+          </div>
           <div class="section-head-center">
             <div class="eyebrow">Esperienze Reali</div>
             <h2 class="section-title">La parola alle nostre clienti</h2>
@@ -1790,76 +2055,23 @@
               Leggi tutte le recensioni o lasciaci una stella su Google
             </a>
           </div>
-
-          <!-- DOVE SIAMO (Mappa <iframe> gratuita + Indirizzo & Orari) -->
-          <div id="dove-siamo" class="location-grid">
-            <div class="map-frame-wrap">
-              <iframe
-                id="google-maps-iframe"
-                title="Mappa sede ENCANTO · Federica Brogna a Nova Siri Marina"
-                src="https://maps.google.com/maps?q=ENCANTO+%C2%B7+Federica+Brogna,+Viale+Siris+2,+75020+Nova+Siri+MT&t=&z=16&ie=UTF8&iwloc=&output=embed"
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                allowfullscreen
-              ></iframe>
-            </div>
-
-            <div class="location-details">
-              <div>
-                <div class="eyebrow">Dove Siamo</div>
-                <h3 class="section-title" style="font-size: clamp(1.75rem, 2.6vw, 2.35rem);">
-                  Vieni a trovarci da <span data-bind="nomeCentro">Encanto</span>
-                </h3>
-              </div>
-
-              <div>
-                <div class="info-block-label">Indirizzo &amp; Contatti Diretti</div>
-                <p class="info-block-text" data-bind="indirizzoCompleto">
-                  Viale Siris 2, 75020 Nova Siri Marina (MT)
-                </p>
-                <p class="info-block-text" style="margin-top: 6px; font-size: 0.925rem; color: var(--text-secondary);">
-                  <a href="tel:+393274951132" data-bind-tel="true" class="tabular" style="text-decoration: underline; text-underline-offset: 3px;" data-bind="telefonoDisplay">+39 327 495 1132</a>
-                  <span aria-hidden="true"> · </span>
-                  <a href="mailto:encanto.federica@gmail.com" data-bind-mailto="true" style="text-decoration: underline; text-underline-offset: 3px;" data-bind="email">encanto.federica@gmail.com</a>
-                </p>
-              </div>
-
-              <div>
-                <div class="info-block-label">Orari &amp; Appuntamenti</div>
-                <ul class="hours-list tabular">
-                  <li><span>Ricevimento</span> <strong>Su appuntamento</strong></li>
-                  <li><span>Martedì – Sabato</span> <strong>Orari flessibili su richiesta</strong></li>
-                  <li><span>Prenotazioni</span> <strong>WhatsApp o Telefono</strong></li>
-                </ul>
-              </div>
-
-              <div class="location-actions">
-                <a
-                  href="#"
-                  class="btn-primary"
-                  data-bind-directions="true"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
-                  </svg>
-                  Avvia Navigatore
-                </a>
-                <button type="button" class="btn-secondary" id="copy-address-btn">
-                  Copia indirizzo
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
       <!-- =================================================================
-           CONTATTI E PRENOTAZIONE RAPIDA
+           PAGINA: CONTATTI E PRENOTAZIONE RAPIDA
            ================================================================= -->
-      <section id="contatti" class="section" style="padding-top: 20px;">
+      <section id="contatti" class="section page-view" data-page="contatti">
         <div class="container">
+          <div class="page-back-bar">
+            <a href="#home" class="page-back-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Torna alla Home
+            </a>
+          </div>
           <div class="booking-panel">
             <div class="eyebrow" style="justify-content: center;">Prenotazione Diretta</div>
             <h2 class="section-title">Prenota il tuo momento di benessere</h2>
@@ -1928,7 +2140,7 @@
     <footer class="site-footer">
       <div class="container footer-inner">
         <div class="footer-brand">
-          <a href="#top" class="brand-logo-link" aria-label="ENCANTO · Federica Brogna">
+          <a href="#home" class="brand-logo-link" aria-label="ENCANTO · Federica Brogna">
             <img
               src="./assets/aistudio/marchio_12080a0c.webp"
               alt="ENCANTO · Federica Brogna"
@@ -1942,12 +2154,14 @@
         </div>
 
         <div class="footer-links">
+          <a href="#home">Home</a>
           <a href="#filosofia">Filosofia</a>
           <a href="#trattamenti">Listino</a>
           <a href="#galleria">Galleria</a>
           <a href="#dove-siamo">Mappa</a>
           <a href="mailto:encanto.federica@gmail.com" data-bind-mailto="true">Email</a>
           <a href="#" data-bind-instagram="true" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href="#" data-bind-facebook="true" target="_blank" rel="noopener noreferrer">Facebook</a>
         </div>
 
         <div>
@@ -1997,12 +2211,16 @@
         telefonoTel: "+393274951132",
         telefonoDisplay: "+39 327 495 1132",
 
-        // Link Instagram (senza API a pagamento)
+        // Link Instagram e Facebook
         instagramHandle: "@encanto_federica_brogna",
         instagramUrl: "https://www.instagram.com/encanto_federica_brogna/",
+        // Incolla qui l'URL diretto della tua pagina Facebook appena pronto
+        facebookUrl:
+          "https://www.facebook.com/search/top/?q=ENCANTO%20Federica%20Brogna%20Nova%20Siri",
 
-        // Link scheda Google Business (condivisione diretta, recensioni e navigatore)
+        // Link scheda Google Business / Google Maps (condivisione diretta, recensioni e navigatore)
         googleReviewsUrl: "https://share.google/8B3lOA9Bshb6IQYWt",
+        googleMapsUrl: "https://share.google/8B3lOA9Bshb6IQYWt",
         googleMapsNavigatoreUrl:
           "https://www.google.com/maps/dir/?api=1&destination=ENCANTO+Federica+Brogna+Viale+Siris+2+75020+Nova+Siri+MT",
         googleMapsEmbedUrl:
@@ -2364,6 +2582,14 @@
           el.setAttribute("href", CONFIG_CENTRO.instagramUrl);
         });
 
+        document.querySelectorAll("[data-bind-facebook]").forEach((el) => {
+          el.setAttribute("href", CONFIG_CENTRO.facebookUrl);
+        });
+
+        document.querySelectorAll("[data-bind-google-maps]").forEach((el) => {
+          el.setAttribute("href", CONFIG_CENTRO.googleMapsUrl);
+        });
+
         document.querySelectorAll("[data-bind-google-reviews]").forEach((el) => {
           el.setAttribute("href", CONFIG_CENTRO.googleReviewsUrl);
         });
@@ -2617,12 +2843,90 @@
         });
       }
 
+      function initPageRouter() {
+        const views = Array.from(document.querySelectorAll(".page-view"));
+        if (views.length === 0) return;
+
+        const subAnchorsToPage = {
+          "dove-siamo": "home"
+        };
+
+        function resolveTarget(hashValue) {
+          const clean = (hashValue || "#home").replace(/^#/, "").trim();
+          if (!clean || clean === "top") {
+            return { page: "home", subAnchor: null };
+          }
+          if (subAnchorsToPage[clean]) {
+            return { page: subAnchorsToPage[clean], subAnchor: clean };
+          }
+          const exists = views.some((v) => v.getAttribute("data-page") === clean);
+          return exists
+            ? { page: clean, subAnchor: null }
+            : { page: "home", subAnchor: null };
+        }
+
+        function showPage(rawHash, updateHistory = false) {
+          const { page, subAnchor } = resolveTarget(rawHash);
+
+          views.forEach((view) => {
+            const isTarget = view.getAttribute("data-page") === page;
+            view.classList.toggle("is-active", isTarget);
+          });
+
+          document.querySelectorAll(".nav-link").forEach((link) => {
+            const href = (link.getAttribute("href") || "").replace(/^#/, "");
+            link.classList.toggle("is-active", href === page);
+          });
+
+          const drawer = document.getElementById("mobile-drawer");
+          const toggleBtn = document.getElementById("mobile-menu-toggle");
+          if (drawer && toggleBtn) {
+            drawer.classList.remove("is-open");
+            toggleBtn.setAttribute("aria-expanded", "false");
+          }
+
+          const targetHash = "#" + (subAnchor || page);
+          if (updateHistory && window.location.hash !== targetHash) {
+            history.pushState(null, "", targetHash);
+          }
+
+          if (subAnchor) {
+            const anchorEl = document.getElementById(subAnchor);
+            if (anchorEl) {
+              requestAnimationFrame(() => {
+                anchorEl.scrollIntoView({ behavior: "smooth", block: "start" });
+              });
+              return;
+            }
+          }
+
+          window.scrollTo({ top: 0, behavior: "instant" });
+        }
+
+        document.addEventListener("click", (event) => {
+          const link = event.target.closest('a[href^="#"]');
+          if (!link) return;
+          if (link.getAttribute("target") === "_blank") return;
+          const href = link.getAttribute("href");
+          if (!href || href === "#") return;
+          event.preventDefault();
+          showPage(href, true);
+        });
+
+        window.addEventListener("hashchange", () => {
+          showPage(window.location.hash, false);
+        });
+
+        showPage(window.location.hash || "#home", false);
+      }
+
       document.addEventListener("DOMContentLoaded", () => {
         applyCenterConfig();
         initPriceList();
         initQuickBooking();
         initCopyAddress();
         initMobileMenu();
+        initPageRouter();
       });
     </script>
   </body>
