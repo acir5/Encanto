@@ -1,0 +1,2629 @@
+<!doctype html>
+<html lang="it">
+  <!--
+  =============================================================================
+  GUIDA RAPIDA ALLA PERSONALIZZAZIONE (4 PASSI SEMPLICI)
+  =============================================================================
+  Questo sito funziona in un unico file (index.html), senza database né
+  abbonamenti. Per adattarlo al tuo centro estetico ti basta aprire questo file
+  con Blocco Note / TextEdit / VS Code, scorrere fino alla sezione <script>
+  in fondo alla pagina e modificare solo questi 4 blocchi:
+
+  1. NOME DEL CENTRO:
+     Cerca `nomeCentro` dentro `CONFIG_CENTRO` (e aggiorna anche il tag <title>
+     qui sotto nel <head> per la scheda del browser).
+
+  2. NUMERO WHATSAPP E TELEFONO:
+     Dentro `CONFIG_CENTRO` aggiorna:
+     - `whatsappNumero`: numero con prefisso internazionale SENZA "+" o spazi
+       (es. "393401234567")
+     - `telefonoTel`: numero con "+39" per la chiamata diretta (es. "+39021234567")
+     - `telefonoDisplay`: come vuoi mostrarlo scritto sul sito (es. "+39 02 1234 567")
+
+  3. LINK INSTAGRAM E GOOGLE MAPS / RECENSIONI:
+     Dentro `CONFIG_CENTRO` aggiorna `instagramHandle`, `instagramUrl`,
+     `googleReviewsUrl`, `googleMapsNavigatoreUrl` e `googleMapsEmbedUrl`
+     (su Google Maps: Cerca il tuo centro -> Condividi -> Incorpora una mappa ->
+     copia l'URL dentro src="...").
+
+  4. LISTINO PREZZI E TRATTAMENTI:
+     Subito sotto `CONFIG_CENTRO` trovi `const LISTINO_PREZZI = [ ... ]`.
+     Puoi cambiare i prezzi, modificare le durate, o aggiungere/togliere righe
+     copiando uno dei blocchi esistenti. Le schede e i filtri per categoria
+     ("Tutti", "Viso", "Corpo", ecc.) si aggiornano automaticamente!
+  =============================================================================
+  -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ENCANTO · Federica Brogna | Centro Estetico a Nova Siri Marina</title>
+    <meta
+      name="description"
+      content="ENCANTO · Federica Brogna a Nova Siri Marina (Viale Siris 2): trattamenti viso, massaggi corpo, manicure curativa ed epilazione su appuntamento."
+    />
+    <meta property="og:title" content="ENCANTO · Federica Brogna | Centro Estetico a Nova Siri Marina" />
+    <meta
+      property="og:description"
+      content="Trattamenti viso, massaggi corpo, manicure curativa ed epilazione a Nova Siri Marina. Prenota su WhatsApp al +39 327 495 1132."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="./assets/aistudio/marchio_12080a0c.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/webp" href="./assets/aistudio/marchio_12080a0c.webp" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BeautySalon",
+        "name": "ENCANTO · Federica Brogna",
+        "logo": "./assets/aistudio/marchio_12080a0c.webp",
+        "telephone": "+393274951132",
+        "email": "encanto.federica@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Viale Siris 2",
+          "addressLocality": "Nova Siri Marina",
+          "addressRegion": "MT",
+          "postalCode": "75020",
+          "addressCountry": "IT"
+        },
+        "sameAs": [
+          "https://www.instagram.com/encanto_federica_brogna/",
+          "https://share.google/8B3lOA9Bshb6IQYWt"
+        ]
+      }
+    </script>
+
+    <!-- Google Fonts: Cormorant Garamond (Serif elegante) + Plus Jakarta Sans (Sans pulito) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        /* 60% Sfondo Neutro Caldo */
+        --bg-ivory: #FAF8F5;
+        /* 30% Superfici Strutturali */
+        --bg-sand: #E6DFD5;
+        --bg-sand-soft: #F3EFE9;
+        --bg-surface: #FFFFFF;
+        /* 10% Accenti (Oro antico del logo & Oro rosa tenue) */
+        --accent-rose: #C5A086;
+        --accent-rose-deep: #856A2B;
+        --accent-sage: #7D8C7B;
+        /* Testi ad alta leggibilità (WCAG AA+) */
+        --text-primary: #2C2C2C;
+        --text-secondary: #59554F;
+        --text-muted: #767068;
+        /* Bordi sottili */
+        --border-hairline: rgba(44, 44, 44, 0.1);
+        --border-strong: rgba(44, 44, 44, 0.2);
+        /* Ombra singola discreta */
+        --shadow-soft: 0 12px 32px -12px rgba(44, 44, 44, 0.08);
+        /* Font */
+        --font-serif: 'Cormorant Garamond', Georgia, serif;
+        --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        /* Raggi e spaziatura */
+        --radius-sm: 8px;
+        --radius-md: 14px;
+        --radius-lg: 20px;
+        --container-max: 1200px;
+        --header-h: 68px;
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      body {
+        margin: 0;
+        background-color: var(--bg-ivory);
+        color: var(--text-primary);
+        font-family: var(--font-sans);
+        font-size: 16px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        font-family: inherit;
+        cursor: pointer;
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--accent-rose-deep);
+        outline-offset: 3px;
+      }
+
+      .tabular {
+        font-variant-numeric: tabular-nums;
+      }
+
+      .container {
+        width: 100%;
+        max-width: var(--container-max);
+        margin-inline: auto;
+        padding-inline: 20px;
+      }
+
+      @media (min-width: 768px) {
+        .container {
+          padding-inline: 36px;
+        }
+      }
+
+      /* =====================================================================
+         NAVBAR FISSA (Contratto a 3 zone, singola riga)
+         ===================================================================== */
+      .site-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 40;
+        height: 58px;
+        background-color: rgba(250, 248, 245, 0.92);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border-hairline);
+      }
+
+      @media (min-width: 768px) {
+        .site-header {
+          height: var(--header-h);
+        }
+      }
+
+      .header-inner {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 32px;
+      }
+
+      .brand-wordmark {
+        font-family: var(--font-serif);
+        font-size: 1.55rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: var(--text-primary);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .brand-logo-link {
+        display: inline-flex;
+        align-items: center;
+        flex-shrink: 0;
+        padding-block: 4px;
+      }
+
+      .brand-logo-img {
+        height: 44px;
+        width: auto;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+      }
+
+      @media (min-width: 768px) {
+        .brand-logo-img {
+          height: 52px;
+        }
+      }
+
+      .brand-logo-fallback {
+        display: none;
+      }
+
+      .brand-logo-link.is-broken .brand-logo-img {
+        display: none;
+      }
+
+      .brand-logo-link.is-broken .brand-logo-fallback {
+        display: inline-block;
+      }
+
+      .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .footer-logo-img {
+        height: 52px;
+        width: auto;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+      }
+
+      .nav-links {
+        display: none;
+        align-items: center;
+        gap: 28px;
+      }
+
+      @media (min-width: 900px) {
+        .nav-links {
+          display: flex;
+        }
+      }
+
+      .nav-link {
+        position: relative;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        flex-shrink: 0;
+        padding-block: 4px;
+        transition: color 180ms var(--ease-out);
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background-color: var(--accent-rose-deep);
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 200ms var(--ease-out);
+      }
+
+      .nav-link:hover {
+        color: var(--text-primary);
+      }
+
+      .nav-link:hover::after {
+        transform: scaleX(1);
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+
+      .btn-header-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 8px 18px;
+        background-color: var(--text-primary);
+        color: var(--bg-ivory);
+        font-size: 0.875rem;
+        font-weight: 500;
+        border-radius: var(--radius-sm);
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: background-color 180ms var(--ease-out), transform 180ms var(--ease-out);
+      }
+
+      .btn-header-cta:hover {
+        background-color: var(--accent-rose-deep);
+        transform: translateY(-1px);
+      }
+
+      .mobile-menu-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 1px solid var(--border-hairline);
+        border-radius: var(--radius-sm);
+        background: transparent;
+        color: var(--text-primary);
+      }
+
+      @media (min-width: 900px) {
+        .mobile-menu-btn {
+          display: none;
+        }
+      }
+
+      .mobile-drawer {
+        display: none;
+        position: fixed;
+        top: 58px;
+        left: 0;
+        right: 0;
+        z-index: 39;
+        background-color: var(--bg-ivory);
+        border-bottom: 1px solid var(--border-hairline);
+        padding: 20px;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .mobile-drawer.is-open {
+        display: block;
+      }
+
+      .mobile-drawer-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .mobile-drawer-link {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 8px 4px;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border-hairline);
+      }
+
+      .mobile-drawer-link:last-child {
+        border-bottom: none;
+      }
+
+      /* =====================================================================
+         BOTTONI RIUTILIZZABILI
+         ===================================================================== */
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 46px;
+        padding: 12px 24px;
+        background-color: var(--text-primary);
+        color: var(--bg-ivory);
+        border: 1px solid var(--text-primary);
+        border-radius: var(--radius-sm);
+        font-size: 0.9375rem;
+        font-weight: 500;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: background-color 180ms var(--ease-out), border-color 180ms var(--ease-out), transform 180ms var(--ease-out);
+      }
+
+      .btn-primary:hover {
+        background-color: var(--accent-rose-deep);
+        border-color: var(--accent-rose-deep);
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 46px;
+        padding: 12px 24px;
+        background-color: transparent;
+        color: var(--text-primary);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-sm);
+        font-size: 0.9375rem;
+        font-weight: 500;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: background-color 180ms var(--ease-out), border-color 180ms var(--ease-out), transform 180ms var(--ease-out);
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--bg-sand-soft);
+        border-color: var(--text-primary);
+        transform: translateY(-1px);
+      }
+
+      .btn-rose {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 46px;
+        padding: 12px 26px;
+        background-color: var(--accent-rose);
+        color: var(--text-primary);
+        border: 1px solid var(--accent-rose);
+        border-radius: var(--radius-sm);
+        font-size: 0.9375rem;
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: background-color 180ms var(--ease-out), transform 180ms var(--ease-out);
+      }
+
+      .btn-rose:hover {
+        background-color: #B78F73;
+        border-color: #B78F73;
+        transform: translateY(-1px);
+      }
+
+      /* =====================================================================
+         TIPOGRAFIA DI SEZIONE E CONTENITORI IMMAGINI
+         ===================================================================== */
+      .section {
+        padding-block: 64px;
+      }
+
+      @media (min-width: 768px) {
+        .section {
+          padding-block: 92px;
+        }
+      }
+
+      .section-sand {
+        background-color: var(--bg-sand-soft);
+        border-top: 1px solid var(--border-hairline);
+        border-bottom: 1px solid var(--border-hairline);
+      }
+
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        color: var(--accent-rose-deep);
+        margin-bottom: 14px;
+      }
+
+      .section-title {
+        font-family: var(--font-serif);
+        font-size: clamp(2rem, 3.4vw, 3rem);
+        font-weight: 500;
+        line-height: 1.12;
+        letter-spacing: -0.015em;
+        color: var(--text-primary);
+        margin: 0 0 16px;
+        text-wrap: balance;
+      }
+
+      .section-lead {
+        font-size: 1.02rem;
+        color: var(--text-secondary);
+        max-width: 60ch;
+        margin: 0;
+      }
+
+      .media-frame {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(145deg, var(--bg-sand-soft) 0%, var(--bg-sand) 100%);
+        border: 1px solid var(--border-hairline);
+      }
+
+      .media-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 420ms var(--ease-out);
+      }
+
+      .media-fallback {
+        position: absolute;
+        inset: 0;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 24px;
+        text-align: center;
+        color: var(--text-secondary);
+        font-family: var(--font-serif);
+        font-size: 1.125rem;
+      }
+
+      .media-frame.is-broken img {
+        display: none;
+      }
+
+      .media-frame.is-broken .media-fallback {
+        display: flex;
+      }
+
+      /* =====================================================================
+         1. HERO SECTION
+         ===================================================================== */
+      .hero {
+        padding-top: calc(58px + 36px);
+        padding-bottom: 48px;
+      }
+
+      @media (min-width: 768px) {
+        .hero {
+          padding-top: calc(var(--header-h) + 52px);
+          padding-bottom: 64px;
+        }
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 32px;
+        align-items: stretch;
+      }
+
+      @media (min-width: 960px) {
+        .hero-grid {
+          grid-template-columns: 1.05fr 1.15fr;
+          gap: 52px;
+        }
+      }
+
+      .hero-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .hero-title {
+        font-family: var(--font-serif);
+        font-size: clamp(2.45rem, 4.4vw, 4rem);
+        font-weight: 500;
+        line-height: 1.06;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        margin: 0 0 20px;
+        text-wrap: balance;
+      }
+
+      .hero-title em {
+        font-style: italic;
+        font-weight: 400;
+        color: var(--accent-rose-deep);
+      }
+
+      .hero-subtitle {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: var(--text-secondary);
+        max-width: 52ch;
+        margin: 0 0 32px;
+      }
+
+      .hero-cta-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      .hero-media {
+        border-radius: var(--radius-lg);
+        aspect-ratio: 1 / 1;
+        box-shadow: var(--shadow-soft);
+      }
+
+      @media (min-width: 960px) {
+        .hero-media {
+          aspect-ratio: 10 / 9;
+          min-height: 460px;
+          max-height: 540px;
+        }
+      }
+
+      /* Striscia informativa sotto Hero */
+      .hero-trust-strip {
+        margin-top: 44px;
+        padding-top: 28px;
+        border-top: 1px solid var(--border-hairline);
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      @media (min-width: 768px) {
+        .hero-trust-strip {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 32px;
+        }
+      }
+
+      .trust-item-value {
+        font-family: var(--font-serif);
+        font-size: 1.35rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+      }
+
+      .trust-item-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+      }
+
+      /* =====================================================================
+         2. CHI SIAMO / FILOSOFIA
+         ===================================================================== */
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 36px;
+        align-items: center;
+      }
+
+      @media (min-width: 960px) {
+        .about-grid {
+          grid-template-columns: 0.95fr 1.05fr;
+          gap: 64px;
+        }
+      }
+
+      .about-media {
+        border-radius: var(--radius-md);
+        aspect-ratio: 4 / 3;
+      }
+
+      .about-text p {
+        color: var(--text-secondary);
+        margin: 0 0 18px;
+        max-width: 58ch;
+      }
+
+      .pillars-list {
+        margin-top: 28px;
+        border-top: 1px solid var(--border-hairline);
+      }
+
+      .pillar-row {
+        display: grid;
+        grid-template-columns: 42px 1fr;
+        gap: 12px;
+        padding-block: 18px;
+        border-bottom: 1px solid var(--border-hairline);
+      }
+
+      .pillar-num {
+        font-family: var(--font-serif);
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--accent-rose-deep);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .pillar-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 4px;
+      }
+
+      .pillar-desc {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin: 0;
+      }
+
+      /* =====================================================================
+         3. LISTINO PREZZI E TRATTAMENTI (Generato da LISTINO_PREZZI)
+         ===================================================================== */
+      .menu-header {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        margin-bottom: 36px;
+      }
+
+      @media (min-width: 900px) {
+        .menu-header {
+          flex-direction: row;
+          align-items: flex-end;
+          justify-content: space-between;
+        }
+      }
+
+      .category-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 5px;
+        background-color: var(--bg-sand-soft);
+        border: 1px solid var(--border-hairline);
+        border-radius: var(--radius-sm);
+        width: fit-content;
+        max-width: 100%;
+      }
+
+      .tab-btn {
+        min-height: 40px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: transparent;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        font-weight: 500;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: background-color 160ms var(--ease-out), color 160ms var(--ease-out);
+      }
+
+      .tab-btn:hover {
+        color: var(--text-primary);
+      }
+
+      .tab-btn.is-active {
+        background-color: var(--bg-surface);
+        color: var(--text-primary);
+        box-shadow: 0 1px 3px rgba(44, 44, 44, 0.08);
+      }
+
+      .treatments-groups {
+        display: flex;
+        flex-direction: column;
+        gap: 36px;
+      }
+
+      .category-group-title {
+        font-family: var(--font-serif);
+        font-size: 1.55rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-hairline);
+      }
+
+      .treatments-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      @media (min-width: 768px) {
+        .treatments-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
+        }
+      }
+
+      .treatment-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 20px 22px;
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-hairline);
+        border-radius: var(--radius-md);
+        transition: border-color 180ms var(--ease-out), transform 180ms var(--ease-out);
+      }
+
+      .packages-callout {
+        margin-top: 32px;
+        padding: 24px 26px;
+        background-color: var(--bg-sand-soft);
+        border: 1px solid var(--border-hairline);
+        border-radius: var(--radius-md);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      @media (min-width: 768px) {
+        .packages-callout {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          gap: 28px;
+        }
+      }
+
+      .packages-callout-title {
+        font-family: var(--font-serif);
+        font-size: 1.35rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 4px;
+      }
+
+      .packages-callout-desc {
+        font-size: 0.925rem;
+        color: var(--text-secondary);
+        margin: 0;
+      }
+
+      .treatment-card:hover {
+        border-color: var(--accent-rose);
+        transform: translateY(-2px);
+      }
+
+      .treatment-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .treatment-meta {
+        font-size: 0.8125rem;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+      }
+
+      .treatment-name {
+        font-family: var(--font-serif);
+        font-size: 1.45rem;
+        font-weight: 600;
+        line-height: 1.2;
+        color: var(--text-primary);
+        margin: 0;
+      }
+
+      .treatment-price {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .treatment-desc {
+        font-size: 0.925rem;
+        color: var(--text-secondary);
+        margin: 0;
+      }
+
+      .treatment-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 14px;
+        border-top: 1px solid var(--border-hairline);
+      }
+
+      .treatment-book-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--accent-rose-deep);
+        transition: color 160ms var(--ease-out);
+      }
+
+      .treatment-book-link:hover {
+        color: var(--text-primary);
+      }
+
+      /* =====================================================================
+         4. GALLERIA / VETRINA INSTAGRAM
+         ===================================================================== */
+      .section-head-center {
+        text-align: center;
+        max-width: 620px;
+        margin-inline: auto;
+        margin-bottom: 44px;
+      }
+
+      .section-head-center .eyebrow {
+        justify-content: center;
+      }
+
+      .section-head-center .section-lead {
+        margin-inline: auto;
+      }
+
+      .ig-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+
+      @media (min-width: 900px) {
+        .ig-grid {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+        }
+      }
+
+      .ig-tile {
+        position: relative;
+        display: block;
+        aspect-ratio: 1 / 1;
+        border-radius: var(--radius-md);
+      }
+
+      .ig-tile:hover img {
+        transform: scale(1.04);
+      }
+
+      .ig-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 18px;
+        background: linear-gradient(to top, rgba(28, 26, 24, 0.78) 0%, rgba(28, 26, 24, 0.18) 55%, transparent 100%);
+        color: #FAF8F5;
+        opacity: 0;
+        transition: opacity 220ms var(--ease-out);
+      }
+
+      .ig-tile:hover .ig-overlay,
+      .ig-tile:focus-visible .ig-overlay {
+        opacity: 1;
+      }
+
+      @media (hover: none) {
+        .ig-overlay {
+          opacity: 1;
+          background: linear-gradient(to top, rgba(28, 26, 24, 0.72) 0%, transparent 55%);
+        }
+      }
+
+      .ig-caption {
+        font-size: 0.875rem;
+        font-weight: 500;
+        line-height: 1.35;
+      }
+
+      .ig-cta-wrap {
+        display: flex;
+        justify-content: center;
+        margin-top: 36px;
+      }
+
+      /* =====================================================================
+         5. RECENSIONI GOOGLE & DOVE SIAMO
+         ===================================================================== */
+      .reviews-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin-bottom: 32px;
+      }
+
+      @media (min-width: 900px) {
+        .reviews-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      .review-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 26px;
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-hairline);
+        border-radius: var(--radius-md);
+      }
+
+      .stars-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #C49144;
+      }
+
+      .review-quote {
+        font-size: 0.95rem;
+        line-height: 1.65;
+        color: var(--text-secondary);
+        margin: 0;
+      }
+
+      .review-author {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .review-meta {
+        font-size: 0.8125rem;
+        color: var(--text-muted);
+      }
+
+      .reviews-cta-row {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 64px;
+      }
+
+      .location-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 28px;
+        align-items: stretch;
+        padding-top: 56px;
+        border-top: 1px solid var(--border-hairline);
+      }
+
+      @media (min-width: 960px) {
+        .location-grid {
+          grid-template-columns: 1.25fr 0.9fr;
+          gap: 44px;
+        }
+      }
+
+      .map-frame-wrap {
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 1px solid var(--border-hairline);
+        background-color: var(--bg-sand-soft);
+        min-height: 340px;
+      }
+
+      .map-frame-wrap iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 360px;
+        border: 0;
+      }
+
+      .location-details {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 22px;
+      }
+
+      .info-block-label {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--accent-rose-deep);
+        margin-bottom: 6px;
+      }
+
+      .info-block-text {
+        font-size: 0.975rem;
+        color: var(--text-primary);
+        margin: 0;
+      }
+
+      .hours-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border-top: 1px solid var(--border-hairline);
+      }
+
+      .hours-list li {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding-block: 8px;
+        border-bottom: 1px solid var(--border-hairline);
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+
+      .hours-list strong {
+        color: var(--text-primary);
+        font-weight: 500;
+      }
+
+      /* =====================================================================
+         6. CONTATTI E PRENOTAZIONE RAPIDA
+         ===================================================================== */
+      .booking-panel {
+        background-color: var(--bg-sand);
+        border: 1px solid var(--border-hairline);
+        border-radius: var(--radius-lg);
+        padding: 40px 24px;
+        text-align: center;
+      }
+
+      @media (min-width: 768px) {
+        .booking-panel {
+          padding: 64px 48px;
+        }
+      }
+
+      .booking-panel .section-title {
+        margin-inline: auto;
+      }
+
+      .booking-panel .section-lead {
+        margin-inline: auto;
+        margin-bottom: 32px;
+      }
+
+      .booking-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 14px;
+      }
+
+      .quick-book-form {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        max-width: 680px;
+        margin: 0 auto 24px;
+        text-align: left;
+      }
+
+      @media (min-width: 640px) {
+        .quick-book-form {
+          grid-template-columns: 1.4fr 1fr;
+        }
+      }
+
+      .quick-field label {
+        display: block;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+      }
+
+      .quick-select {
+        width: 100%;
+        min-height: 46px;
+        padding: 10px 14px;
+        font-family: inherit;
+        font-size: 0.9375rem;
+        color: var(--text-primary);
+        background-color: var(--bg-ivory);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-sm);
+      }
+
+      .location-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .treatments-count {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        margin: 0 0 18px;
+      }
+
+      /* =====================================================================
+         FOOTER
+         ===================================================================== */
+      .site-footer {
+        border-top: 1px solid var(--border-hairline);
+        padding-block: 40px;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+      }
+
+      .footer-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: space-between;
+      }
+
+      @media (min-width: 768px) {
+        .footer-inner {
+          flex-direction: row;
+          align-items: center;
+        }
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .footer-links a:hover {
+        color: var(--text-primary);
+      }
+
+      /* =====================================================================
+         PULSANTE FLOTTANTE WHATSAPP (STICKY)
+         ===================================================================== */
+      .whatsapp-float {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 45;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #256847;
+        color: #FFFFFF;
+        box-shadow: 0 10px 24px -6px rgba(44, 44, 44, 0.28);
+        transition: transform 180ms var(--ease-out), background-color 180ms var(--ease-out);
+      }
+
+      .whatsapp-float:hover {
+        background-color: #1D5439;
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===================================================================
+         NAVBAR FISSA
+         =================================================================== -->
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="#top" class="brand-logo-link" aria-label="ENCANTO · Federica Brogna — Torna su">
+          <img
+            src="./assets/aistudio/marchio_12080a0c.webp"
+            alt="Logo ufficiale ENCANTO · Federica Brogna"
+            class="brand-logo-img"
+            referrerpolicy="no-referrer"
+            onerror="this.parentElement.classList.add('is-broken')"
+          />
+          <span class="brand-wordmark brand-logo-fallback" data-bind="nomeCentro">Encanto</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Navigazione principale">
+          <a href="#filosofia" class="nav-link">Filosofia</a>
+          <a href="#trattamenti" class="nav-link">Trattamenti</a>
+          <a href="#galleria" class="nav-link">Galleria</a>
+          <a href="#recensioni" class="nav-link">Recensioni</a>
+          <a href="#contatti" class="nav-link">Contatti</a>
+        </nav>
+
+        <div class="header-actions">
+          <a
+            href="#contatti"
+            class="btn-header-cta"
+            data-bind-whatsapp="default"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Prenota Ora
+          </a>
+          <button
+            type="button"
+            class="mobile-menu-btn"
+            id="mobile-menu-toggle"
+            aria-label="Apri menu di navigazione"
+            aria-expanded="false"
+            aria-controls="mobile-drawer"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+              <line x1="4" y1="7" x2="20" y2="7"></line>
+              <line x1="4" y1="12" x2="20" y2="12"></line>
+              <line x1="4" y1="17" x2="20" y2="17"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <nav class="mobile-drawer" id="mobile-drawer" aria-label="Menu mobile">
+        <div class="mobile-drawer-list">
+          <a href="#filosofia" class="mobile-drawer-link">Filosofia</a>
+          <a href="#trattamenti" class="mobile-drawer-link">Trattamenti</a>
+          <a href="#galleria" class="mobile-drawer-link">Galleria</a>
+          <a href="#recensioni" class="mobile-drawer-link">Recensioni</a>
+          <a href="#dove-siamo" class="mobile-drawer-link">Dove Siamo</a>
+          <a href="#contatti" class="mobile-drawer-link">Contatti</a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="top">
+      <!-- =================================================================
+           HERO SECTION
+           ================================================================= -->
+      <section class="hero">
+        <div class="container">
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <div class="eyebrow">
+                <span data-bind="citta">Nova Siri Marina (MT)</span>
+                <span aria-hidden="true">·</span>
+                <span>Estetica &amp; Massaggi</span>
+              </div>
+
+              <h1 class="hero-title">
+                Dedicati alla tua <em>bellezza</em>, con calma e cura.
+              </h1>
+
+              <p class="hero-subtitle">
+                Estetica di base e avanzata a Nova Siri Marina: rituali viso su misura,
+                massaggi corpo con sauna a infrarossi, manicure curativa ed epilazione
+                delicata, sempre su appuntamento.
+              </p>
+
+              <div class="hero-cta-group">
+                <a
+                  href="#"
+                  class="btn-primary"
+                  data-bind-whatsapp="default"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                  </svg>
+                  Prenota su WhatsApp
+                </a>
+                <a href="#trattamenti" class="btn-secondary">Scopri i Trattamenti</a>
+              </div>
+            </div>
+
+            <div class="media-frame hero-media">
+              <img
+                src="./assets/aistudio/unnamed_21afa47e.webp"
+                alt="Vetrina e ingresso del centro estetico ENCANTO di Federica Brogna a Nova Siri Marina"
+                style="object-position: center 22%;"
+                referrerpolicy="no-referrer"
+                onerror="this.parentElement.classList.add('is-broken')"
+              />
+              <div class="media-fallback">
+                <span data-bind="nomeCentro">Encanto</span>
+                <small>Viale Siris 2 · Nova Siri Marina</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-trust-strip">
+            <div>
+              <div class="trust-item-value">Estetica di Base &amp; Avanzata</div>
+              <div class="trust-item-label">Rituali viso, sauna a infrarossi, massaggi, nails ed epilazione</div>
+            </div>
+            <div>
+              <div class="trust-item-value">Su Appuntamento</div>
+              <div class="trust-item-label">Ambienti riservati e attenzione dedicata senza attese</div>
+            </div>
+            <div>
+              <div class="trust-item-value">Viale Siris 2 · Nova Siri Marina</div>
+              <div class="trust-item-label">Posizione centrale e facile da raggiungere</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           CHI SIAMO / FILOSOFIA
+           ================================================================= -->
+      <section id="filosofia" class="section section-sand">
+        <div class="container">
+          <div class="about-grid">
+            <div class="media-frame about-media">
+              <img
+                src="./assets/aistudio/unnamed__1__9b33da27.webp"
+                alt="Interno luminoso di ENCANTO con scritta Dedicati alla tua bellezza e vetrina su Viale Siris"
+                style="object-position: center center;"
+                referrerpolicy="no-referrer"
+                loading="lazy"
+                onerror="this.parentElement.classList.add('is-broken')"
+              />
+              <div class="media-fallback">
+                <span>Dedicati alla tua bellezza</span>
+                <small>ENCANTO · Nova Siri Marina</small>
+              </div>
+            </div>
+
+            <div class="about-text">
+              <div class="eyebrow">La Nostra Filosofia</div>
+              <h2 class="section-title">Uno spazio pensato per farti sentire accolta</h2>
+              <p>
+                In <strong data-bind="nomeCentroEsteso">ENCANTO · Federica Brogna</strong> ogni
+                dettaglio degli ambienti è studiato per unire competenza tecnica certificata e
+                atmosfera rilassante: dalla luminosa zona accoglienza alla cabina massaggi con
+                sauna a infrarossi.
+              </p>
+              <p>
+                Riceviamo esclusivamente su appuntamento per offrirti trattamenti personalizzati di
+                estetica di base e avanzata, cosmetologia applicata e cura delle mani con linee
+                professionali selezionate.
+              </p>
+
+              <div class="pillars-list">
+                <div class="pillar-row">
+                  <span class="pillar-num">01.</span>
+                  <div>
+                    <h3 class="pillar-title">Diagnosi cutanea personalizzata</h3>
+                    <p class="pillar-desc">
+                      Ogni trattamento viene calibrato sul momento in base a idratazione, tono e
+                      sensibilità della pelle.
+                    </p>
+                  </div>
+                </div>
+                <div class="pillar-row">
+                  <span class="pillar-num">02.</span>
+                  <div>
+                    <h3 class="pillar-title">Principi attivi botanici e sicuri</h3>
+                    <p class="pillar-desc">
+                      Selezioniamo sieri concentrati ad alta tollerabilità, privi di profumazioni
+                      sintetiche aggressive.
+                    </p>
+                  </div>
+                </div>
+                <div class="pillar-row">
+                  <span class="pillar-num">03.</span>
+                  <div>
+                    <h3 class="pillar-title">Rituali senza fretta</h3>
+                    <p class="pillar-desc">
+                      Nessuna sovrapposizione di appuntamenti: il tempo in cabina è interamente
+                      dedicato al tuo recupero.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           LISTINO PREZZI E TRATTAMENTI (Generato da JavaScript)
+           ================================================================= -->
+      <section id="trattamenti" class="section">
+        <div class="container">
+          <div class="menu-header">
+            <div>
+              <div class="eyebrow">Menu dei Servizi</div>
+              <h2 class="section-title">Listino Trattamenti</h2>
+              <p class="section-lead">
+                Seleziona una categoria per consultare durate e tariffe trasparenti, oppure
+                prenota direttamente il rituale desiderato su WhatsApp.
+              </p>
+            </div>
+
+            <div class="category-tabs" id="category-tabs" role="tablist" aria-label="Categorie trattamenti">
+              <!-- I bottoni filtro vengono generati automaticamente da LISTINO_PREZZI -->
+            </div>
+          </div>
+
+          <p class="treatments-count tabular" id="treatments-count"></p>
+
+          <div class="treatments-groups" id="treatments-grid" aria-live="polite">
+            <!-- Le schede trattamento vengono generate automaticamente da LISTINO_PREZZI -->
+          </div>
+
+          <div class="packages-callout">
+            <div>
+              <h3 class="packages-callout-title">Pacchetti Personalizzati Corpo &amp; Benessere</h3>
+              <p class="packages-callout-desc">
+                Percorsi su misura con Radiofrequenza, Coppettazione, Fangoterapia, Drenaggio,
+                Bendaggi, Scrub e molto altro.
+              </p>
+            </div>
+            <a
+              href="#"
+              id="packages-whatsapp-btn"
+              class="btn-secondary"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Chiedi info sui pacchetti
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           GALLERIA / VETRINA INSTAGRAM
+           ================================================================= -->
+      <section id="galleria" class="section section-sand">
+        <div class="container">
+          <div class="section-head-center">
+            <div class="eyebrow">I Nostri Ambienti</div>
+            <h2 class="section-title">Uno sguardo dentro ENCANTO</h2>
+            <p class="section-lead">
+              Scopri le nostre cabine trattamenti, la postazione manicure, i dettagli dello studio
+              e gli aggiornamenti quotidiani su Instagram.
+            </p>
+          </div>
+
+          <div class="ig-grid">
+            <a
+              href="#"
+              class="media-frame ig-tile"
+              data-bind-instagram="true"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Apri Instagram: Cabina massaggi e sauna infrarossi"
+            >
+              <img
+                src="./assets/aistudio/unnamed__7__27429e10.webp"
+                alt="Cabina benessere ENCANTO con lettino da massaggio e sauna in legno"
+                style="object-position: center 48%;"
+                referrerpolicy="no-referrer"
+                loading="lazy"
+                onerror="this.parentElement.classList.add('is-broken')"
+              />
+              <div class="media-fallback"><span>Cabina Massaggi &amp; Sauna</span></div>
+              <div class="ig-overlay">
+                <span class="ig-caption">Cabina corpo riservata con lettino massaggi e sauna a infrarossi</span>
+              </div>
+            </a>
+
+            <a
+              href="#"
+              class="media-frame ig-tile"
+              data-bind-instagram="true"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Apri Instagram: Postazione manicure professionale"
+            >
+              <img
+                src="./assets/aistudio/unnamed__6__d32a1348.webp"
+                alt="Postazione manicure e ricostruzione unghie Gamax su parete verde"
+                style="object-position: center 55%;"
+                referrerpolicy="no-referrer"
+                loading="lazy"
+                onerror="this.parentElement.classList.add('is-broken')"
+              />
+              <div class="media-fallback"><span>Postazione Nails</span></div>
+              <div class="ig-overlay">
+                <span class="ig-caption">Postazione manicure curativa e semipermanente con prodotti professionali Gamax</span>
+              </div>
+            </a>
+
+            <a
+              href="#"
+              class="media-frame ig-tile"
+              data-bind-instagram="true"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Apri Instagram: Salottino accoglienza clienti"
+            >
+              <img
+                src="./assets/aistudio/unnamed__5__6e61f05c.webp"
+                alt="Area attesa e accoglienza con poltroncine in velluto nero e dettagli oro"
+                style="object-position: center 56%;"
+                referrerpolicy="no-referrer"
+                loading="lazy"
+                onerror="this.parentElement.classList.add('is-broken')"
+              />
+              <div class="media-fallback"><span>Zona Accoglienza</span></div>
+              <div class="ig-overlay">
+                <span class="ig-caption">Angolo accoglienza luminoso affacciato su Viale Siris</span>
+              </div>
+            </a>
+
+            <a
+              href="#"
+              class="media-frame ig-tile"
+              data-bind-instagram="true"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Apri Instagram: Attestati di specializzazione e smalti"
+            >
+              <img
+                src="./assets/aistudio/unnamed__2__e24c00db.webp"
+                alt="Attestati professionali di Federica Brogna e collezione smalti semipermanenti"
+                style="object-position: center 42%;"
+                referrerpolicy="no-referrer"
+                loading="lazy"
+                onerror="this.parentElement.classList.add('is-broken')"
+              />
+              <div class="media-fallback"><span>Formazione &amp; Colori</span></div>
+              <div class="ig-overlay">
+                <span class="ig-caption">Formazione continua certificata e oltre 50 tonalità semipermanenti</span>
+              </div>
+            </a>
+
+            <a
+              href="#"
+              class="media-frame ig-tile"
+              data-bind-instagram="true"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Apri Instagram: Dettagli d'arredo e specchio esagonale"
+            >
+              <img
+                src="./assets/aistudio/unnamed__3__51ff4053.webp"
+                alt="Specchio esagonale retroilluminato con scritta Dedicati alla tua bellezza e spugne ENCANTO"
+                style="object-position: center 50%;"
+                referrerpolicy="no-referrer"
+                loading="lazy"
+                onerror="this.parentElement.classList.add('is-broken')"
+              />
+              <div class="media-fallback"><span>Dettagli ENCANTO</span></div>
+              <div class="ig-overlay">
+                <span class="ig-caption">Ogni dettaglio parla di cura: specchio esagonale e lino ricamato ENCANTO</span>
+              </div>
+            </a>
+
+            <a
+              href="#"
+              class="media-frame ig-tile"
+              data-bind-instagram="true"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Apri Instagram: Esterno vetrina su Viale Siris 2"
+            >
+              <img
+                src="./assets/aistudio/unnamed_21afa47e.webp"
+                alt="Vetrina esterna ENCANTO con targa Estetica di Base e Avanzata a Nova Siri Marina"
+                style="object-position: center 28%;"
+                referrerpolicy="no-referrer"
+                loading="lazy"
+                onerror="this.parentElement.classList.add('is-broken')"
+              />
+              <div class="media-fallback"><span>Viale Siris 2</span></div>
+              <div class="ig-overlay">
+                <span class="ig-caption">Ti aspettiamo in Viale Siris 2 a Nova Siri Marina</span>
+              </div>
+            </a>
+          </div>
+
+          <div class="ig-cta-wrap">
+            <a
+              href="#"
+              class="btn-primary"
+              data-bind-instagram="true"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+              <span>Seguici su Instagram (<span data-bind="instagramHandle">@encanto_federica_brogna</span>)</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           RECENSIONI GOOGLE & DOVE SIAMO
+           ================================================================= -->
+      <section id="recensioni" class="section">
+        <div class="container">
+          <div class="section-head-center">
+            <div class="eyebrow">Esperienze Reali</div>
+            <h2 class="section-title">La parola alle nostre clienti</h2>
+            <p class="section-lead">
+              Ogni trattamento da <strong data-bind="nomeCentroEsteso">ENCANTO · Federica Brogna</strong>
+              nasce dall'ascolto e dalla cura del dettaglio. Consulta la scheda Google o condividi
+              la tua esperienza.
+            </p>
+          </div>
+
+          <div class="reviews-grid">
+            <article class="review-card">
+              <div>
+                <div class="stars-row" aria-label="5 stelle su 5">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <p class="review-quote" style="margin-top: 14px;">
+                  "Un'oasi di pace a Nova Siri. Federica è attentissima, delicata e super
+                  professionale: dopo il trattamento viso la mia pelle sensibile era subito più
+                  luminosa e distesa."
+                </p>
+              </div>
+              <div>
+                <div class="review-author">Chiara Lombardi</div>
+                <div class="review-meta">Rituale Viso · Recensione Google</div>
+              </div>
+            </article>
+
+            <article class="review-card">
+              <div>
+                <div class="stars-row" aria-label="5 stelle su 5">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <p class="review-quote" style="margin-top: 14px;">
+                  "Finalmente un centro dove non si corre. Il massaggio decontratturante schiena e
+                  cervicale è stato rigenerante, l'ambiente profuma di oli essenziali naturali ed è
+                  pulitissimo."
+                </p>
+              </div>
+              <div>
+                <div class="review-author">Elena Ferretti</div>
+                <div class="review-meta">Massaggio Corpo · Recensione Google</div>
+              </div>
+            </article>
+
+            <article class="review-card">
+              <div>
+                <div class="stars-row" aria-label="5 stelle su 5">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <p class="review-quote" style="margin-top: 14px;">
+                  "Faccio qui manicure semipermanente ed epilazione laser da quasi un anno.
+                  Precisione chirurgica sulle cuticole, strumenti sterilizzati e grande gentilezza
+                  da parte di tutto lo staff."
+                </p>
+              </div>
+              <div>
+                <div class="review-author">Giulia Marchetti</div>
+                <div class="review-meta">Mani &amp; Epilazione · Recensione Google</div>
+              </div>
+            </article>
+          </div>
+
+          <div class="reviews-cta-row">
+            <a
+              href="#"
+              class="btn-secondary"
+              data-bind-google-reviews="true"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Leggi tutte le recensioni o lasciaci una stella su Google
+            </a>
+          </div>
+
+          <!-- DOVE SIAMO (Mappa <iframe> gratuita + Indirizzo & Orari) -->
+          <div id="dove-siamo" class="location-grid">
+            <div class="map-frame-wrap">
+              <iframe
+                id="google-maps-iframe"
+                title="Mappa sede ENCANTO · Federica Brogna a Nova Siri Marina"
+                src="https://maps.google.com/maps?q=ENCANTO+%C2%B7+Federica+Brogna,+Viale+Siris+2,+75020+Nova+Siri+MT&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen
+              ></iframe>
+            </div>
+
+            <div class="location-details">
+              <div>
+                <div class="eyebrow">Dove Siamo</div>
+                <h3 class="section-title" style="font-size: clamp(1.75rem, 2.6vw, 2.35rem);">
+                  Vieni a trovarci da <span data-bind="nomeCentro">Encanto</span>
+                </h3>
+              </div>
+
+              <div>
+                <div class="info-block-label">Indirizzo &amp; Contatti Diretti</div>
+                <p class="info-block-text" data-bind="indirizzoCompleto">
+                  Viale Siris 2, 75020 Nova Siri Marina (MT)
+                </p>
+                <p class="info-block-text" style="margin-top: 6px; font-size: 0.925rem; color: var(--text-secondary);">
+                  <a href="tel:+393274951132" data-bind-tel="true" class="tabular" style="text-decoration: underline; text-underline-offset: 3px;" data-bind="telefonoDisplay">+39 327 495 1132</a>
+                  <span aria-hidden="true"> · </span>
+                  <a href="mailto:encanto.federica@gmail.com" data-bind-mailto="true" style="text-decoration: underline; text-underline-offset: 3px;" data-bind="email">encanto.federica@gmail.com</a>
+                </p>
+              </div>
+
+              <div>
+                <div class="info-block-label">Orari &amp; Appuntamenti</div>
+                <ul class="hours-list tabular">
+                  <li><span>Ricevimento</span> <strong>Su appuntamento</strong></li>
+                  <li><span>Martedì – Sabato</span> <strong>Orari flessibili su richiesta</strong></li>
+                  <li><span>Prenotazioni</span> <strong>WhatsApp o Telefono</strong></li>
+                </ul>
+              </div>
+
+              <div class="location-actions">
+                <a
+                  href="#"
+                  class="btn-primary"
+                  data-bind-directions="true"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                  </svg>
+                  Avvia Navigatore
+                </a>
+                <button type="button" class="btn-secondary" id="copy-address-btn">
+                  Copia indirizzo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           CONTATTI E PRENOTAZIONE RAPIDA
+           ================================================================= -->
+      <section id="contatti" class="section" style="padding-top: 20px;">
+        <div class="container">
+          <div class="booking-panel">
+            <div class="eyebrow" style="justify-content: center;">Prenotazione Diretta</div>
+            <h2 class="section-title">Prenota il tuo momento di benessere</h2>
+            <p class="section-lead">
+              Scrivici su WhatsApp per verificare le disponibilità in giornata o chiamaci per
+              ricevere un consiglio sul percorso più adatto alla tua pelle.
+            </p>
+
+            <div class="quick-book-form">
+              <div class="quick-field">
+                <label for="quick-treatment-select">Trattamento di interesse</label>
+                <select id="quick-treatment-select" class="quick-select">
+                  <option value="">Consulenza / Informazioni generali</option>
+                </select>
+              </div>
+              <div class="quick-field">
+                <label for="quick-time-select">Fascia oraria preferita</label>
+                <select id="quick-time-select" class="quick-select">
+                  <option value="Indifferente">Flessibile (qualsiasi orario)</option>
+                  <option value="Mattina">Mattina</option>
+                  <option value="Pomeriggio">Pomeriggio</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="booking-actions">
+              <a
+                href="#"
+                id="quick-whatsapp-btn"
+                class="btn-primary"
+                data-bind-whatsapp="default"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                </svg>
+                Invia richiesta su WhatsApp
+              </a>
+
+              <a href="tel:+393274951132" class="btn-rose" data-bind-tel="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <span>Chiama Ora (<span class="tabular" data-bind="telefonoDisplay">+39 327 495 1132</span>)</span>
+              </a>
+            </div>
+
+            <p style="margin: 22px 0 0; font-size: 0.9rem; color: var(--text-secondary);">
+              Preferisci scriverci via e-mail?
+              <a
+                href="mailto:encanto.federica@gmail.com"
+                data-bind-mailto="true"
+                style="font-weight: 500; color: var(--text-primary); text-decoration: underline; text-underline-offset: 3px;"
+                data-bind="email"
+              >encanto.federica@gmail.com</a>
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================================================================
+         FOOTER
+         =================================================================== -->
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <a href="#top" class="brand-logo-link" aria-label="ENCANTO · Federica Brogna">
+            <img
+              src="./assets/aistudio/marchio_12080a0c.webp"
+              alt="ENCANTO · Federica Brogna"
+              class="footer-logo-img"
+              referrerpolicy="no-referrer"
+              onerror="this.parentElement.classList.add('is-broken')"
+            />
+            <strong class="brand-wordmark brand-logo-fallback" style="font-size: 1.25rem;" data-bind="nomeCentro">Encanto</strong>
+          </a>
+          <span data-bind="indirizzoBreve">Viale Siris 2, Nova Siri Marina</span>
+        </div>
+
+        <div class="footer-links">
+          <a href="#filosofia">Filosofia</a>
+          <a href="#trattamenti">Listino</a>
+          <a href="#galleria">Galleria</a>
+          <a href="#dove-siamo">Mappa</a>
+          <a href="mailto:encanto.federica@gmail.com" data-bind-mailto="true">Email</a>
+          <a href="#" data-bind-instagram="true" target="_blank" rel="noopener noreferrer">Instagram</a>
+        </div>
+
+        <div>
+          © <span id="current-year">2026</span> <span data-bind="nomeCentroEsteso">Encanto di Federica Brogna</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ===================================================================
+         PULSANTE STICKY WHATSAPP (SEMPRE VISIBILE IN BASSO A DESTRA)
+         =================================================================== -->
+    <a
+      href="#"
+      class="whatsapp-float"
+      data-bind-whatsapp="default"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Prenota subito su WhatsApp"
+      title="Scrivici su WhatsApp"
+    >
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+      </svg>
+    </a>
+
+    <!-- ===================================================================
+         DATI & LOGICA DEL SITO (FACILE DA AGGIORNARE)
+         =================================================================== -->
+    <script>
+      /* ===================================================================
+         1. CONFIGURAZIONE PRINCIPALE DEL CENTRO (Modifica qui i tuoi dati)
+         =================================================================== */
+      const CONFIG_CENTRO = {
+        nomeCentro: "Encanto",
+        nomeCentroEsteso: "ENCANTO · Federica Brogna",
+        citta: "Nova Siri Marina (MT)",
+        indirizzoCompleto: "Viale Siris 2, 75020 Nova Siri Marina (MT)",
+        indirizzoBreve: "Viale Siris 2, Nova Siri Marina",
+        email: "encanto.federica@gmail.com",
+
+        // Inserisci il numero WhatsApp con prefisso 39, senza "+" e senza spazi
+        whatsappNumero: "393274951132",
+        whatsappMessaggioBase:
+          "Ciao Federica! Vorrei informazioni per prenotare un trattamento da ENCANTO.",
+
+        // Numero di telefono per chiamate dirette
+        telefonoTel: "+393274951132",
+        telefonoDisplay: "+39 327 495 1132",
+
+        // Link Instagram (senza API a pagamento)
+        instagramHandle: "@encanto_federica_brogna",
+        instagramUrl: "https://www.instagram.com/encanto_federica_brogna/",
+
+        // Link scheda Google Business (condivisione diretta, recensioni e navigatore)
+        googleReviewsUrl: "https://share.google/8B3lOA9Bshb6IQYWt",
+        googleMapsNavigatoreUrl:
+          "https://www.google.com/maps/dir/?api=1&destination=ENCANTO+Federica+Brogna+Viale+Siris+2+75020+Nova+Siri+MT",
+        googleMapsEmbedUrl:
+          "https://maps.google.com/maps?q=ENCANTO+%C2%B7+Federica+Brogna,+Viale+Siris+2,+75020+Nova+Siri+MT&t=&z=16&ie=UTF8&iwloc=&output=embed"
+      };
+
+      /* ===================================================================
+         2. LISTINO PREZZI E TRATTAMENTI (Modifica, aggiungi o togli voci qui)
+         Ogni voce genera automaticamente la propria scheda nella sezione
+         "Listino Trattamenti" e i pulsanti filtro per categoria.
+         =================================================================== */
+      const LISTINO_PREZZI = [
+        // --- CATEGORIA: MANICURE & PEDICURE ---
+        {
+          categoria: "Manicure & Pedicure",
+          nomeTrattamento: "Manicure Basica",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Cura essenziale di unghie e cuticole per mani sempre ordinate.",
+          prezzo: 10
+        },
+        {
+          categoria: "Manicure & Pedicure",
+          nomeTrattamento: "Pedicure Estetico Dry",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Pedicure a secco con fresa e pulizia precisa del giro cuticole.",
+          prezzo: 20
+        },
+        {
+          categoria: "Manicure & Pedicure",
+          nomeTrattamento: "Pedicure Curativo con Calluspeeling",
+          durata: "Su appuntamento",
+          descrizioneBreve:
+            "Trattamento mirato alla rimozione dolce delle callosità e pelle morbida senza lame.",
+          prezzo: 30
+        },
+
+        // --- CATEGORIA: NAILS ---
+        {
+          categoria: "Nails",
+          nomeTrattamento: "Solo Rimozione Semipermanente / Gel",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Rimozione delicata del precedente lavoro con cura della lamina ungueale.",
+          prezzo: 7
+        },
+        {
+          categoria: "Nails",
+          nomeTrattamento: "Semipermanente Rinforzato Piedi",
+          durata: "Con rimozione inclusa",
+          descrizioneBreve: "Applicazione semipermanente rinforzato per piedi curati a lungo.",
+          prezzo: 17
+        },
+        {
+          categoria: "Nails",
+          nomeTrattamento: "Semipermanente Rinforzato Mani",
+          durata: "Con rimozione inclusa",
+          descrizioneBreve: "Dry manicure con base rinforzante e stesura colore sottocuticola.",
+          prezzo: 27
+        },
+        {
+          categoria: "Nails",
+          nomeTrattamento: "Refil",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Ritocco e ripristino della struttura in gel o acrigel.",
+          prezzo: 35
+        },
+        {
+          categoria: "Nails",
+          nomeTrattamento: "Copertura in Gel / Acrigel",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Rinforzo protettivo su unghia naturale con gel o acrigel.",
+          prezzo: 40
+        },
+        {
+          categoria: "Nails",
+          nomeTrattamento: "Allungamento Gel / Acrigel",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Ricostruzione e allungamento su misura della forma desiderata.",
+          prezzo: "a partire da € 50"
+        },
+        {
+          categoria: "Nails",
+          nomeTrattamento: "Supplemento per French / Decorazioni",
+          durata: "Aggiunta al servizio",
+          descrizioneBreve: "Dettagli nail art, french o decorazioni personalizzate.",
+          prezzo: 3
+        },
+
+        // --- CATEGORIA: BENESSERE CORPO & VISO ---
+        {
+          categoria: "Benessere Corpo & Viso",
+          nomeTrattamento: "Sauna Infrarossi (15')",
+          durata: "15 min",
+          descrizioneBreve: "Sessione breve di calore a infrarossi per detossinare e rilassare.",
+          prezzo: 10
+        },
+        {
+          categoria: "Benessere Corpo & Viso",
+          nomeTrattamento: "Sauna Infrarossi (30')",
+          durata: "30 min",
+          descrizioneBreve: "Seduta completa in cabina a infrarossi per il benessere profondo.",
+          prezzo: 20
+        },
+        {
+          categoria: "Benessere Corpo & Viso",
+          nomeTrattamento: "Pulizia Viso",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Detersione profonda e riequilibrio cutaneo personalizzato.",
+          prezzo: 30
+        },
+        {
+          categoria: "Benessere Corpo & Viso",
+          nomeTrattamento: "Pulizia Viso con Radiofrequenza",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Pulizia viso abbinata a radiofrequenza tonificante e rimpolpante.",
+          prezzo: 50
+        },
+        {
+          categoria: "Benessere Corpo & Viso",
+          nomeTrattamento: "Sauna (15') + Massaggio Corpo Relax (20')",
+          durata: "35 min",
+          descrizioneBreve: "Percorso rapido distensivo con preparazione termica e massaggio.",
+          prezzo: 40
+        },
+        {
+          categoria: "Benessere Corpo & Viso",
+          nomeTrattamento: "Sauna (15') + Massaggio Corpo Relax (45')",
+          durata: "60 min",
+          descrizioneBreve: "Rituale completo rilassante con sauna infrarossi e massaggio esteso.",
+          prezzo: 60
+        },
+        {
+          categoria: "Benessere Corpo & Viso",
+          nomeTrattamento: "Sauna (30') + Radiofrequenza Anticellulite (30')",
+          durata: "60 min",
+          descrizioneBreve: "Trattamento combinato rimodellante e drenante ad azione mirata.",
+          prezzo: 70
+        },
+
+        // --- CATEGORIA: EPILAZIONE DONNA ---
+        {
+          categoria: "Epilazione Donna",
+          nomeTrattamento: "Sopracciglia",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Definizione precisa dell'arcata sopraccigliare.",
+          prezzo: 3
+        },
+        {
+          categoria: "Epilazione Donna",
+          nomeTrattamento: "Ascelle",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Epilazione delicata zona ascellare.",
+          prezzo: 6
+        },
+        {
+          categoria: "Epilazione Donna",
+          nomeTrattamento: "Sopracciglia e Zona Labiale",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Rifinitura combinata sopracciglia e labbro superiore.",
+          prezzo: 6
+        },
+        {
+          categoria: "Epilazione Donna",
+          nomeTrattamento: "Viso",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Epilazione dolce dedicata alle zone del viso.",
+          prezzo: 8
+        },
+        {
+          categoria: "Epilazione Donna",
+          nomeTrattamento: "Braccia",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Epilazione completa braccia con cera delicata.",
+          prezzo: 10
+        },
+        {
+          categoria: "Epilazione Donna",
+          nomeTrattamento: "Inguine Totale",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Epilazione inguine totale ad alta tollerabilità.",
+          prezzo: 12
+        },
+        {
+          categoria: "Epilazione Donna",
+          nomeTrattamento: "Gambe (Senza Inguine)",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Epilazione gambe intere esclusa zona inguine.",
+          prezzo: 16
+        },
+        {
+          categoria: "Epilazione Donna",
+          nomeTrattamento: "Gambe (Con Inguine)",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Epilazione completa gambe e zona inguine.",
+          prezzo: 20
+        },
+        {
+          categoria: "Epilazione Donna",
+          nomeTrattamento: "Epilazione Completa Donna",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Servizio completo multi-zona per una pelle liscia a lungo.",
+          prezzo: 45
+        },
+
+        // --- CATEGORIA: EPILAZIONE UOMO ---
+        {
+          categoria: "Epilazione Uomo",
+          nomeTrattamento: "Sopracciglia Uomo",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Pulizia e definizione naturale delle sopracciglia.",
+          prezzo: 3
+        },
+        {
+          categoria: "Epilazione Uomo",
+          nomeTrattamento: "Ascelle Uomo",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Epilazione delicata della zona ascellare.",
+          prezzo: 8
+        },
+        {
+          categoria: "Epilazione Uomo",
+          nomeTrattamento: "Braccia Uomo",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Epilazione completa delle braccia.",
+          prezzo: 12
+        },
+        {
+          categoria: "Epilazione Uomo",
+          nomeTrattamento: "Addome e Petto",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Epilazione combinata della parte anteriore del busto.",
+          prezzo: 14
+        },
+        {
+          categoria: "Epilazione Uomo",
+          nomeTrattamento: "Dorso e Zona Lombare",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Epilazione completa schiena e zona lombare.",
+          prezzo: 14
+        },
+        {
+          categoria: "Epilazione Uomo",
+          nomeTrattamento: "Gambe (Escluso Inguine)",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Epilazione completa degli arti inferiori.",
+          prezzo: 28
+        },
+        {
+          categoria: "Epilazione Uomo",
+          nomeTrattamento: "Epilazione Completa Uomo",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Trattamento completo corpo con cera professionale.",
+          prezzo: 60
+        },
+
+        // --- CATEGORIA: MAKE UP ---
+        {
+          categoria: "Make Up",
+          nomeTrattamento: "Trucco Giorno",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Make up naturale, luminoso ed elegante per il giorno.",
+          prezzo: 25
+        },
+        {
+          categoria: "Make Up",
+          nomeTrattamento: "Trucco Sera",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Make up strutturato a lunga tenuta per eventi e serate.",
+          prezzo: 30
+        },
+        {
+          categoria: "Make Up",
+          nomeTrattamento: "Applicazione Ciglia Finte",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Applicazione ciuffetti o banda per intensificare lo sguardo.",
+          prezzo: 5
+        },
+        {
+          categoria: "Make Up",
+          nomeTrattamento: "Supplemento Giorni Festivi",
+          durata: "Maggiorazione festiva",
+          descrizioneBreve: "Supplemento applicato per appuntamenti in giornate festive.",
+          prezzo: 5
+        },
+        {
+          categoria: "Make Up",
+          nomeTrattamento: "Trucco Sposa",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Consulenza, prova dedicata e make up giorno del matrimonio.",
+          prezzo: "Da concordare"
+        },
+
+        // --- CATEGORIA: CIGLIA & SOPRACCIGLIA ---
+        {
+          categoria: "Ciglia & Sopracciglia",
+          nomeTrattamento: "Laminazione Ciglia + Sopracciglia",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Curvatura, nutrimento alla cheratina e definizione naturale dello sguardo.",
+          prezzo: 50
+        },
+        {
+          categoria: "Ciglia & Sopracciglia",
+          nomeTrattamento: "Hennè Sopracciglia + Ceretta",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Architettura dell'arcata con ceretta e colorazione naturale all'hennè.",
+          prezzo: 50
+        },
+        {
+          categoria: "Ciglia & Sopracciglia",
+          nomeTrattamento: "Extension Ciglia",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Applicazione extension su misura per volume e lunghezza personalizzati.",
+          prezzo: "a partire da € 50"
+        },
+        {
+          categoria: "Ciglia & Sopracciglia",
+          nomeTrattamento: "Ritocco Extension Ciglia",
+          durata: "Su appuntamento",
+          descrizioneBreve: "Mantenimento periodico e riempimento delle extension ciglia.",
+          prezzo: "a partire da € 35"
+        }
+      ];
+
+      /* ===================================================================
+         3. MOTORE DI RENDERING AUTOMATICO (Non è necessario modificare sotto)
+         =================================================================== */
+      function buildWhatsAppUrl(customMessage) {
+        const text = encodeURIComponent(customMessage || CONFIG_CENTRO.whatsappMessaggioBase);
+        return `https://wa.me/${CONFIG_CENTRO.whatsappNumero}?text=${text}`;
+      }
+
+      function formatPrezzo(prezzo) {
+        if (typeof prezzo === "number") {
+          return `€ ${prezzo}`;
+        }
+        return String(prezzo);
+      }
+
+      function applyCenterConfig() {
+        document.querySelectorAll("[data-bind]").forEach((el) => {
+          const key = el.getAttribute("data-bind");
+          if (key && CONFIG_CENTRO[key]) {
+            el.textContent = CONFIG_CENTRO[key];
+          }
+        });
+
+        document.querySelectorAll("[data-bind-whatsapp]").forEach((el) => {
+          el.setAttribute("href", buildWhatsAppUrl());
+        });
+
+        document.querySelectorAll("[data-bind-tel]").forEach((el) => {
+          el.setAttribute("href", `tel:${CONFIG_CENTRO.telefonoTel}`);
+        });
+
+        document.querySelectorAll("[data-bind-mailto]").forEach((el) => {
+          el.setAttribute("href", `mailto:${CONFIG_CENTRO.email}`);
+        });
+
+        document.querySelectorAll("[data-bind-instagram]").forEach((el) => {
+          el.setAttribute("href", CONFIG_CENTRO.instagramUrl);
+        });
+
+        document.querySelectorAll("[data-bind-google-reviews]").forEach((el) => {
+          el.setAttribute("href", CONFIG_CENTRO.googleReviewsUrl);
+        });
+
+        document.querySelectorAll("[data-bind-directions]").forEach((el) => {
+          el.setAttribute("href", CONFIG_CENTRO.googleMapsNavigatoreUrl);
+        });
+
+        const packagesBtn = document.getElementById("packages-whatsapp-btn");
+        if (packagesBtn) {
+          packagesBtn.setAttribute(
+            "href",
+            buildWhatsAppUrl(
+              "Ciao Federica! Vorrei informazioni sui pacchetti personalizzati (Radiofrequenza, Coppettazione, Fangoterapia, Drenaggio, Bendaggi, Scrub)."
+            )
+          );
+        }
+
+        const mapIframe = document.getElementById("google-maps-iframe");
+        if (mapIframe && CONFIG_CENTRO.googleMapsEmbedUrl) {
+          mapIframe.setAttribute("src", CONFIG_CENTRO.googleMapsEmbedUrl);
+        }
+
+        const yearEl = document.getElementById("current-year");
+        if (yearEl) {
+          yearEl.textContent = String(new Date().getFullYear());
+        }
+      }
+
+      function createTreatmentCard(item) {
+        const card = document.createElement("article");
+        card.className = "treatment-card";
+
+        const priceFormatted = formatPrezzo(item.prezzo);
+        const metaParts = [item.categoria];
+        if (item.durata && item.durata !== "Su appuntamento") {
+          metaParts.push(item.durata);
+        }
+
+        const whatsappBookingText = `Ciao Federica! Vorrei prenotare "${item.nomeTrattamento}" (${priceFormatted}). Quali disponibilità avete da ENCANTO?`;
+
+        card.innerHTML = `
+          <div>
+            <div class="treatment-top">
+              <div>
+                <div class="treatment-meta">
+                  ${metaParts.map((part) => `<span>${escapeHtml(part)}</span>`).join('<span aria-hidden="true"> · </span>')}
+                </div>
+                <h3 class="treatment-name">${escapeHtml(item.nomeTrattamento)}</h3>
+              </div>
+              <div class="treatment-price tabular">${escapeHtml(priceFormatted)}</div>
+            </div>
+            <p class="treatment-desc" style="margin-top: 8px;">
+              ${escapeHtml(item.descrizioneBreve)}
+            </p>
+          </div>
+          <div class="treatment-footer">
+            <span class="treatment-meta" style="margin: 0;">Su appuntamento</span>
+            <a
+              href="${buildWhatsAppUrl(whatsappBookingText)}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="treatment-book-link"
+            >
+              Prenota su WhatsApp
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          </div>
+        `;
+
+        return card;
+      }
+
+      function initPriceList() {
+        const tabsContainer = document.getElementById("category-tabs");
+        const gridContainer = document.getElementById("treatments-grid");
+        if (!tabsContainer || !gridContainer) return;
+
+        // Estrae le categorie uniche mantenendo l'ordine di inserimento
+        const categories = ["Tutti"];
+        LISTINO_PREZZI.forEach((item) => {
+          if (item.categoria && !categories.includes(item.categoria)) {
+            categories.push(item.categoria);
+          }
+        });
+
+        let activeCategory = "Tutti";
+
+        function renderTabs() {
+          tabsContainer.innerHTML = "";
+          categories.forEach((cat) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "tab-btn" + (cat === activeCategory ? " is-active" : "");
+            btn.setAttribute("role", "tab");
+            btn.setAttribute("aria-selected", cat === activeCategory ? "true" : "false");
+            btn.textContent = cat;
+            btn.addEventListener("click", () => {
+              activeCategory = cat;
+              renderTabs();
+              renderTreatments();
+            });
+            tabsContainer.appendChild(btn);
+          });
+        }
+
+        function renderTreatments() {
+          const filtered =
+            activeCategory === "Tutti"
+              ? LISTINO_PREZZI
+              : LISTINO_PREZZI.filter((item) => item.categoria === activeCategory);
+
+          const countEl = document.getElementById("treatments-count");
+          if (countEl) {
+            const label = filtered.length === 1 ? "trattamento" : "trattamenti";
+            countEl.textContent =
+              activeCategory === "Tutti"
+                ? `${filtered.length} ${label} disponibili in listino`
+                : `${filtered.length} ${label} nella categoria ${activeCategory}`;
+          }
+
+          gridContainer.innerHTML = "";
+
+          if (filtered.length === 0) {
+            const empty = document.createElement("p");
+            empty.textContent = "Nessun trattamento disponibile in questa categoria.";
+            gridContainer.appendChild(empty);
+            return;
+          }
+
+          if (activeCategory === "Tutti") {
+            categories
+              .filter((c) => c !== "Tutti")
+              .forEach((catName) => {
+                const itemsInCat = filtered.filter((item) => item.categoria === catName);
+                if (itemsInCat.length === 0) return;
+
+                const groupSection = document.createElement("div");
+                const groupHeading = document.createElement("h3");
+                groupHeading.className = "category-group-title";
+                groupHeading.textContent = catName;
+
+                const groupGrid = document.createElement("div");
+                groupGrid.className = "treatments-grid";
+                itemsInCat.forEach((item) => {
+                  groupGrid.appendChild(createTreatmentCard(item));
+                });
+
+                groupSection.appendChild(groupHeading);
+                groupSection.appendChild(groupGrid);
+                gridContainer.appendChild(groupSection);
+              });
+          } else {
+            const singleGrid = document.createElement("div");
+            singleGrid.className = "treatments-grid";
+            filtered.forEach((item) => {
+              singleGrid.appendChild(createTreatmentCard(item));
+            });
+            gridContainer.appendChild(singleGrid);
+          }
+        }
+
+        renderTabs();
+        renderTreatments();
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function initMobileMenu() {
+        const toggleBtn = document.getElementById("mobile-menu-toggle");
+        const drawer = document.getElementById("mobile-drawer");
+        if (!toggleBtn || !drawer) return;
+
+        function closeMenu() {
+          drawer.classList.remove("is-open");
+          toggleBtn.setAttribute("aria-expanded", "false");
+        }
+
+        toggleBtn.addEventListener("click", () => {
+          const isOpen = drawer.classList.toggle("is-open");
+          toggleBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        });
+
+        drawer.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", closeMenu);
+        });
+      }
+
+      function initQuickBooking() {
+        const treatmentSelect = document.getElementById("quick-treatment-select");
+        const timeSelect = document.getElementById("quick-time-select");
+        const waBtn = document.getElementById("quick-whatsapp-btn");
+        if (!treatmentSelect || !timeSelect || !waBtn) return;
+
+        const categories = [];
+        LISTINO_PREZZI.forEach((item) => {
+          if (item.categoria && !categories.includes(item.categoria)) {
+            categories.push(item.categoria);
+          }
+        });
+
+        categories.forEach((cat) => {
+          const optgroup = document.createElement("optgroup");
+          optgroup.label = cat;
+          LISTINO_PREZZI.filter((item) => item.categoria === cat).forEach((item) => {
+            const opt = document.createElement("option");
+            const priceLabel = formatPrezzo(item.prezzo);
+            opt.value = `${item.nomeTrattamento} (${priceLabel})`;
+            opt.textContent = `${item.nomeTrattamento} — ${priceLabel}`;
+            optgroup.appendChild(opt);
+          });
+          treatmentSelect.appendChild(optgroup);
+        });
+
+        function updateWhatsAppHref() {
+          const chosen = treatmentSelect.value;
+          const fascia = timeSelect.value;
+          const msg = chosen
+            ? `Ciao Federica! Vorrei prenotare "${chosen}" (fascia oraria preferita: ${fascia}). Quando avete disponibilità da ENCANTO?`
+            : `Ciao Federica! Vorrei informazioni per un appuntamento da ENCANTO (fascia oraria preferita: ${fascia}).`;
+          waBtn.setAttribute("href", buildWhatsAppUrl(msg));
+        }
+
+        treatmentSelect.addEventListener("change", updateWhatsAppHref);
+        timeSelect.addEventListener("change", updateWhatsAppHref);
+        updateWhatsAppHref();
+      }
+
+      function initCopyAddress() {
+        const copyBtn = document.getElementById("copy-address-btn");
+        if (!copyBtn) return;
+
+        copyBtn.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(CONFIG_CENTRO.indirizzoCompleto);
+            const original = copyBtn.textContent;
+            copyBtn.textContent = "Indirizzo copiato";
+            setTimeout(() => {
+              copyBtn.textContent = original;
+            }, 2200);
+          } catch {
+            copyBtn.textContent = CONFIG_CENTRO.indirizzoBreve;
+          }
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        applyCenterConfig();
+        initPriceList();
+        initQuickBooking();
+        initCopyAddress();
+        initMobileMenu();
+      });
+    </script>
+  </body>
+</html>
